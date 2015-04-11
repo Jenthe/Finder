@@ -1,0 +1,50 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    tools:context="jenthe.thienpondt.be.finder.MenuFragment">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:id="@+id/imgbtnShopping"
+        android:src="@drawable/appbar_shopping"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:id="@+id/imgbtnMoney"
+        android:src="@drawable/appbar_money"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:id="@+id/imgbtnCulture"
+        android:src="@drawable/appbar_church"
+        android:layout_alignParentEnd="true" />
+
+    <FrameLayout
+        android:id="@+id/containerMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/imgbtnShopping">
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.google.android.gms.maps.MapFragment"
+            tools:layout="@layout/activity_main" />
+
+    </FrameLayout>
+
+</RelativeLayout>

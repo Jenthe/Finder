@@ -1,8 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+
+        <item name="android:actionBarStyle">@style/FinderActionBar</item>
+        <item name="android:colorPrimaryDark">@color/clr_blue_status_bar</item>
+        <item name="android:navigationBarColor">@color/clr_blue</item>
+
+    </style>
+
+    <style name="FinderActionBar" parent="android:Widget.Material.ActionBar">
+
+        <item name="android:background">@color/clr_blue</item>
     </style>
 
 </resources>
