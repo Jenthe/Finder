@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -46,14 +48,75 @@ public class MenuFragment extends Fragment implements OnMapReadyCallback,
     private OnFragmentInteractionListener mListener;
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mMap;
+    private Location location;
+
     public static final String TAG = MenuFragment.class.getSimpleName();
+
+    private ImageButton btnBanks;
+    private ImageButton btnShops;
+    private ImageButton btnCafes;
 
     public MenuFragment() {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        btnBanks = (ImageButton) view.findViewById(R.id.imgbtnMoney);
+        btnShops = (ImageButton) view.findViewById(R.id.imgbtnShopping);
+        btnCafes = (ImageButton) view.findViewById(R.id.imgbtnCulture);
+
+        btnShops.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String shopsUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
+                        "location=" + location.getLatitude() + "," + location.getLongitude() + "&" +
+                        "radius=3000&" +
+                        "types=food&" +
+                        "key=" + Constants.KEY_PLACES;
+
+                mMap.clear();
+
+                setUserLocation();
+
+                new readJSONFileTask().execute(shopsUrl);
+            }
+        });
+
+        btnCafes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String shopsUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
+                        "location=" + location.getLatitude() + "," + location.getLongitude() + "&" +
+                        "radius=3000&" +
+                        "types=cafe&" +
+                        "key=" + Constants.KEY_PLACES;
+
+                mMap.clear();
+
+                setUserLocation();
+
+                new readJSONFileTask().execute(shopsUrl);
+            }
+        });
+
+        btnBanks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String shopsUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
+                        "location=" + location.getLatitude() + "," + location.getLongitude() + "&" +
+                        "radius=3000&" +
+                        "types=bank&" +
+                        "key=" + Constants.KEY_PLACES;
+
+                mMap.clear();
+
+                setUserLocation();
+
+                new readJSONFileTask().execute(shopsUrl);
+            }
+        });
     }
 
     @Override
@@ -107,11 +170,21 @@ public class MenuFragment extends Fragment implements OnMapReadyCallback,
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
 
+    public void setUserLocation(){
+
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("You are here!")
+                .icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+    }
+
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Location services connected.");
 
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         String shopsUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
                 "location=" + location.getLatitude() + "," + location.getLongitude() + "&" +
@@ -130,7 +203,9 @@ public class MenuFragment extends Fragment implements OnMapReadyCallback,
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
         mMap.animateCamera(zoom);
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("You are here!"));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("You are here!")
+                .icon(BitmapDescriptorFactory
+                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
     @Override
@@ -170,8 +245,6 @@ public class MenuFragment extends Fragment implements OnMapReadyCallback,
                     e.printStackTrace();
                 }
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -199,8 +272,10 @@ public class MenuFragment extends Fragment implements OnMapReadyCallback,
                         .getJSONObject("geometry")
                         .getJSONObject("location");
 
-                mMap.addMarker(new MarkerOptions().position(new LatLng(locObject.getDouble("lat"),
-                        locObject.getDouble("lng"))).title("FOOOOOD!!"));
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(locObject.getDouble("lat"),
+                                locObject.getDouble("lng")))
+                        .title(results.getJSONObject(i).getString("name")));
             }
 
         } catch (JSONException e) {
